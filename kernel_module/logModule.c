@@ -17,7 +17,7 @@ MODULE_DESCRIPTION("LogModule for Infotecs");
 MODULE_LICENSE("GPL");
 
 static struct kobject *logModule; 
-static struct timer_list logTimer; 
+static struct delayed_work logWork;
 
 static DEFINE_MUTEX(moduleMutex);
 
@@ -101,24 +101,13 @@ static long handleOpenError(struct file *filp, const char *filename)
     
     switch (err_code) {
     case -ENOENT:
-        pr_err("logModule: Path does not exist: %s\n", filename);
-        pr_err("logModule: Hint: sudo mkdir -p /var/tmp/test_module\n");
+        pr_err("logModule: path does not exist: %s\n", filename);
         break;
     case -EPERM:
-        pr_err("logModule: Permission denied: %s (error %ld)\n", filename, err_code);
-        pr_err("logModule: Hint: sudo chmod 777 /var/tmp/test_module\n");
-        break;
-    case -EROFS:
-        pr_err("logModule: Read-only filesystem: %s\n", filename);
-        break;
-    case -ENOSPC:
-        pr_err("logModule: No space left on device: %s\n", filename);
-        break;
-    case -ENFILE:
-        pr_err("logModule: Too many open files: %s\n", filename);
+        pr_err("logModule: permission denied: %s (error %ld)\n", filename, err_code);
         break;
     default:
-        pr_err("logModule: Failed to open file: %s (error %ld)\n", filename, err_code);
+        pr_err("logModule: failed to open file: %s (error %ld)\n", filename, err_code);
         break;
     }
     
@@ -131,7 +120,6 @@ static void writeLogToFile(void){
 
     struct file *filp;
     char msg[128];
-    loff_t pos = 0;
     ssize_t ret; 
     char curFilename[128];
     unsigned long curLogNumber;
@@ -145,7 +133,7 @@ static void writeLogToFile(void){
     
     int len = snprintf(msg, sizeof(msg), "Hello from kernel module (%lu)\n", curLogNumber);
     if (len <= 0){
-        pr_err("logModule: error while write the msg"); 
+        pr_err("logModule: error copy msg"); 
         return;
     }
 
@@ -156,35 +144,34 @@ static void writeLogToFile(void){
         return; 
     }
 
-    ret = kernel_write(filp, msg, len, &pos); 
+    ret = kernel_write(filp, msg, len, &filp->f_pos); 
 
     if(ret < 0){
-        pr_err("logModule: error while kernel_write");
+        pr_err("logModule: write error");
     }
 
     filp_close(filp, NULL); 
 }
 
-static void timerCallback(struct timer_list* t){
-    unsigned int curPeriod;
+static void logWorkHandler(struct work_struct *work)
+{
+    unsigned int period;
 
-    writeLogToFile(); 
+    writeLogToFile();
 
     mutex_lock(&moduleMutex);
-    curPeriod = timeForLog;
+    period = timeForLog;
     mutex_unlock(&moduleMutex);
 
-    mod_timer(&logTimer, jiffies + msecs_to_jiffies(curPeriod * 1000));
+    schedule_delayed_work(
+        &logWork,
+        msecs_to_jiffies(period * 1000)
+    );
 }
-
 static int __init logModule_init(void){
     int error = 0;
 
     pr_info("logModule: init\n");
-
-    timer_setup(&logTimer, timerCallback, 0);
-
-    mod_timer(&logTimer, jiffies + msecs_to_jiffies(timeForLog * 1000));
 
     logModule = kobject_create_and_add("logModule", kernel_kobj); 
     if (!logModule)
@@ -204,13 +191,17 @@ static int __init logModule_init(void){
         kobject_put(logModule); 
     }
 
+    INIT_DELAYED_WORK(&logWork, logWorkHandler);
+
+    schedule_delayed_work(&logWork, msecs_to_jiffies(timeForLog * 1000));
+
     return error; 
 }
 
 static void __exit logModule_exit(void){
     pr_info("logModule: exit\n");
 
-    del_timer_sync(&logTimer);
+    cancel_delayed_work_sync(&logWork);
 
     sysfs_remove_file(logModule, &timeForLogAttribute.attr);
     sysfs_remove_file(logModule, &filenameAttribute.attr);
