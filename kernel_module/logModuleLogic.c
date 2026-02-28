@@ -1,5 +1,15 @@
 #include "logModuleMain.h"
 
+/**
+ * handleOpenError() - Обработка ошибок открытия файла
+ *
+ * @filp: Указатель на файл с ошибкой
+ * @filename: Имя файла для вывода в лог
+ * 
+ * @return - [long] : Код ошибки
+ * 
+ * Выводит сообщение с ошабкой в dmesg в зависимости от её типа.
+ */
 static long handleOpenError(struct file *filp, const char *filename){
     long err_code = PTR_ERR(filp);
 
@@ -18,7 +28,14 @@ static long handleOpenError(struct file *filp, const char *filename){
     return err_code;
 }
 
-static void writeLogToFile(void){
+
+/**
+ * writeLogToFile() - Запись строки лога в файл
+ * 
+ * Открывает или создаёт файл, записывает лог через
+ * kernel_write и инкриментирует счётчик.
+ */
+static void writeLogToFile(){
     pr_info("logModule: start to log with N = %lu\n", logModuleData.logNumber);
 
     struct file *filp;

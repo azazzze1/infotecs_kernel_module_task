@@ -9,7 +9,7 @@
 ## Установка и запуск
 1. **Скачать репозиторий**
 ```bash
-git clone git@github.com:azazzze1/infotecs_kernel_module_task.git
+git clone https://github.com/azazzze1/infotecs_kernel_module_task.git
 cd infotecs_kernel_module_task
 ```
 
@@ -39,17 +39,17 @@ sudo dmesg --follow
 ## Использование
 
 ### Настройка с помощью пользовательского приложения
+
+| Опция | Описание | Значение по умолчанию |
+|-------|----------|----------------------|
+| `-t, --time SEC` | Интервал записи лога (сек) | 5 |
+| `-f, --file PATH` | Путь к файлу лога | `/var/tmp/test_module/log.txt` |
+| `-h, --help` | Показать справку | — |
+
+### Пример:
+
 ```bash
-# Изменение времени таймера (в секундах):
-    sudo ./logModuleController --time 10
-    sudo ./logModuleController -t 10
-
-# Установить новый путь до файла логов:
-    sudo ./logModuleController --file /var/tmp/test_module/mylog.txt
-    sudo ./logModuleController -f /var/tmp/test_module/mylog.txt
-
-# Комбинированная команда: 
-    sudo ./logModuleController -t 5 -f /var/tmp/test_module/log.txt
+sudo ./logModuleController -t 5 -f /var/tmp/test_module/log.txt
 ```
 
 ## Выгрузка модуля

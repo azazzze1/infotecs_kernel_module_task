@@ -33,7 +33,7 @@ void cmdInfo(const char *prog){
     printf("\t-h, --help                Show this help\n");
 }
 
-int checkModuleLoaded(void){
+int checkModuleLoaded(){
     struct stat st;
     if (stat(SYSFS_PATH, &st) != 0){
         fprintf(stderr, "Error: logModule not loaded or path %s not found\n", SYSFS_PATH);

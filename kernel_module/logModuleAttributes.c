@@ -1,5 +1,7 @@
 #include "logModuleMain.h"
 
+/* Создание аттрибута для периода времени */
+
 static ssize_t timeForLogShow(struct kobject *kobj, struct kobj_attribute *attr,
                               char *buf){
     unsigned int val;
@@ -30,6 +32,9 @@ static ssize_t timeForLogStore(struct kobject *kobj,
 }
 
 struct kobj_attribute lm_timeForLogAttribute = __ATTR(timeForLog, 0660, timeForLogShow, (void *)timeForLogStore);
+
+
+/* Создание аттрибута для полного пути файла для записи */
 
 static ssize_t filenameShow(struct kobject *kobj, struct kobj_attribute *attr,
                             char *buf){
