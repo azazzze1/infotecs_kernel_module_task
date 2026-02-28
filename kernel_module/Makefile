@@ -1,7 +1,19 @@
 obj-m += logModule.o
+logModule-objs := logModuleMain.o logModuleAttributes.o logModuleLogic.o
+
+KDIR := /lib/modules/$(shell uname -r)/build
+PWD := $(shell pwd)
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	make -C $(KDIR) M=$(PWD) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	make -C $(KDIR) M=$(PWD) clean
+
+load:
+	insmod logModule.ko
+
+unload:
+	rmmod logModule
+
+.PHONY: all clean load unload
