@@ -3,6 +3,11 @@
 int main(int argc, char* argv[]){
     struct module_cfg cfg;
 
+    if(checkModuleLoaded()){
+        printf("HUI!\n"); 
+        return 1;
+    }
+
     if(parseArguments(argc, argv, &cfg)){
         return 1; 
     }

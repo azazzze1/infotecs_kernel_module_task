@@ -4,9 +4,8 @@ static struct option longOpt[] = {
     {"time", required_argument, 0, 't'},
     {"file", required_argument, 0, 'f'},
     {"help", no_argument, 0, 'h'},
-    {0, 0, 0}
+    {0, 0, 0, 0}
 };
-
 
 int writeToFile(const char* path, const char* val){
     FILE *file = fopen(path, "w");
@@ -91,14 +90,14 @@ int applyAttributes(const struct module_cfg *cfg){
     }
 
     if(cfg->setFilename){
-        printf("Setting filename to %s..,\n", cfg->filenameVal);
+        printf("Setting filename to \"%s\"...\n", cfg->filenameVal);
         if(writeToFile(SYSFS_FILENAME_FILE, cfg->filenameVal)){
             return -1; 
         } 
         printf("Done!\n");
     }
 
-    printf("Configuration updated: success!!!\n");
+    printf("Configuration updated: success!\n");
     return 0; 
 }
 

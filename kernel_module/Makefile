@@ -11,9 +11,9 @@ clean:
 	make -C $(KDIR) M=$(PWD) clean
 
 load:
-	insmod logModule.ko
+	sudo insmod logModule.ko
 
 unload:
-	rmmod logModule
+	sudo rmmod logModule
 
 .PHONY: all clean load unload

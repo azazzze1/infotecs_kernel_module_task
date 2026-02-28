@@ -71,7 +71,7 @@ int checkModuleLoaded();
 int parseArguments(int argc, char* argv[], struct module_cfg* cfg);
 
 /**
- * applyConfiguration() - Применение конфигурации к модулю
+ * applyAttributes() - Применение конфигурации к модулю
  * @config: Структура с конфигурацией
  * 
  * @return 0 при успехе, -1 при неудаче
