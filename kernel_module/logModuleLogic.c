@@ -35,7 +35,7 @@ static long handleOpenError(struct file *filp, const char *filename){
  * Открывает или создаёт файл, записывает лог через
  * kernel_write и инкриментирует счётчик.
  */
-static void writeLogToFile(){
+static void writeLogToFile(void){
     pr_info("logModule: start to log with N = %lu\n", logModuleData.logNumber);
 
     struct file *filp;
