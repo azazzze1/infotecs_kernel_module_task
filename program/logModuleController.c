@@ -84,7 +84,7 @@ int parseArguments(int argc, char* argv[], struct module_cfg* cfg){
 int applyAttributes(const struct module_cfg *cfg){
     if(cfg->setTime){
         printf("Setting time period to %s seconds..,\n", cfg->timeVal);
-        if(!writeToFile(SYSFS_TIME_FILE, cfg->timeVal)){
+        if(writeToFile(SYSFS_TIME_FILE, cfg->timeVal)){
             return -1; 
         } 
         printf("Done!\n");
@@ -92,7 +92,7 @@ int applyAttributes(const struct module_cfg *cfg){
 
     if(cfg->setFilename){
         printf("Setting filename to %s..,\n", cfg->filenameVal);
-        if(!writeToFile(SYSFS_FILENAME_FILE, cfg->filenameVal)){
+        if(writeToFile(SYSFS_FILENAME_FILE, cfg->filenameVal)){
             return -1; 
         } 
         printf("Done!\n");

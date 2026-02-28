@@ -24,7 +24,7 @@ static void writeLogToFile(void){
     struct file *filp;
     char msg[128];
     ssize_t ret;
-    char curFilename[128];
+    char curFilename[256];
     unsigned long curLogNumber;
 
     mutex_lock(&logModuleData.mutex);
